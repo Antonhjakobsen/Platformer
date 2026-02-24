@@ -57,23 +57,25 @@ class Player {
     }
   }
 
-  void playerAX() {//virker
+  void playerAX() { // Player Axis X acceleration
     if (keyPressed==true&&leftPressed==true&&xAccel>-accelerationLimit) {//left
-      xAccel=xAccel-=2;
+      xAccel-=2;
     } else if (leftPressed==false&&xAccel<0) {
-      xAccel=xAccel*0.95;
+      xAccel=xAccel*0.85;
     }
     if (keyPressed==true&&rightPressed==true&&xAccel<accelerationLimit) {//right
       xAccel+=2;
     } else if (rightPressed==false&&xAccel>0) {
-      xAccel=xAccel*0.95;
+      xAccel=xAccel*0.85;
     }
 
+     //Brake with down arrow
     if (keyPressed==true&&downPressed==true) {//brake
       xAccel=xAccel*0.35;
     }
   }
 
+// Player Axis Y Acceleration
   void playerAY() {
     if (keyPressed==true&&upPressed==true&&y1>height/1.2) {
       yAccel-=25;
@@ -95,9 +97,8 @@ class Player {
         player.idleAnimation();
         popMatrix();
         text("Left", width/2, height/1.5);
-      } else if (xAccel>0) {//Right
+      } else if (xAccel>=0) {//Right
         pushMatrix();
-        translate(-x1+x1, 0);
         scale(1, 1);
         player.idleAnimation();
         popMatrix();
@@ -125,7 +126,7 @@ class Player {
     loadFall();
   }
 
-  void colission() {
+  void collision() {
     if (y1>=height/1.2&&yAccel>=0) {
       yAccel=0;
       y1=height/1.2+1;
@@ -133,7 +134,7 @@ class Player {
   }
 
   void engine() {
-    colission();
+    collision();
     grav();
     playerAX();
     playerAY();
