@@ -70,7 +70,7 @@ class Player {
     }
 
     if (keyPressed==true&&downPressed==true) {//brake
-      xAccel=xAccel*0.95;
+      xAccel=xAccel*0.35;
     }
   }
 
@@ -87,8 +87,28 @@ class Player {
   }
 
   void displayPlayer() {
-    if (player.yAccel<=0) {
-      player.idleAnimation();
+    if (yAccel==0) {
+      if (xAccel<=0) {//Left
+        pushMatrix();
+        translate(idle[idlecurrentFrame].width+x1*2, 0);
+        scale(-1, 1);
+        player.idleAnimation();
+        popMatrix();
+        text("Left", width/2, height/1.5);
+      } else if (xAccel>0) {//Right
+        pushMatrix();
+        translate(-x1+x1, 0);
+        scale(1, 1);
+        player.idleAnimation();
+        popMatrix();
+        text("Right", width/2, height/1.5);
+      }
+    } else if (xAccel<0) {
+      pushMatrix();
+      translate(fall[fallcurrentFrame].width+x1*2, 0);
+      scale(-1, 1);
+      player.fallAnimation();
+      popMatrix();
     } else {
       player.fallAnimation();
     }
@@ -119,5 +139,9 @@ class Player {
     playerAY();
     movePlayer();
     displayPlayer();
+    fill(255);
+    text(x1, width/2, height/2);
+    text(xAccel, width/2+200, height/2);
+    fill(0);
   }
 }
