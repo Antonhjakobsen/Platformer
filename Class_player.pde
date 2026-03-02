@@ -113,20 +113,22 @@ class Player {
   }
 
   void displayPlayer() {
-    if (xAccel<0&&xAccel>-1) {//Left
-      pushMatrix();
-      translate(idle[idlecurrentFrame].width+x1*2, 0);
-      scale(-1, 1);
-      player.idleAnimation();
-      popMatrix();
-      text("Left", width/2, height/1.5);
-    } else if (xAccel>=0&&xAccel<1) {//Right
-      pushMatrix();
-      scale(1, 1);
-      player.idleAnimation();
-      popMatrix();
-      text("Right", width/2, height/1.5);
-    } else if (xAccel<0&&yAccel!=0) {
+
+      if (xAccel<0&&xAccel>-1&&yAccel==0) {//Left
+        pushMatrix();
+        translate(idle[idlecurrentFrame].width+x1*2, 0);
+        scale(-1, 1);
+        player.idleAnimation();
+        popMatrix();
+        text("Left", width/2, height/1.5);
+      } else if (xAccel>=0&&xAccel<1&&yAccel==0) {//Right
+        pushMatrix();
+        scale(1, 1);
+        player.idleAnimation();
+        popMatrix();
+        text("Right", width/2, height/1.5);
+      }
+      else if (xAccel<0&&yAccel!=0) {
       pushMatrix();
       translate(fall[fallcurrentFrame].width+x1*2, 0);
       scale(-1, 1);
