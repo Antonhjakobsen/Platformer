@@ -5,6 +5,7 @@ class Player {
   float yAccel;
   float accelerationLimit = 10;
   float friction = 0.60;
+  float baseLine = height/1.2;
 
   int idlenumFrames;  // The number of frames in the animation
   int idlecurrentFrame;
@@ -100,33 +101,32 @@ class Player {
 
   // Player Axis Y Acceleration
   void playerAY() {
-    if (keyPressed==true&&upPressed==true&&y1>height/1.2) {
+    if (keyPressed==true&&upPressed==true&&y1>baseLine) {
       yAccel-=25;
     }
   }
 
   void grav() {
-    if (y1<height/1.2) {
+    if (y1<baseLine) {
       yAccel+=1;
     }
   }
 
   void displayPlayer() {
-      if (xAccel<0&&xAccel>-1) {//Left
-        pushMatrix();
-        translate(idle[idlecurrentFrame].width+x1*2, 0);
-        scale(-1, 1);
-        player.idleAnimation();
-        popMatrix();
-        text("Left", width/2, height/1.5);
-      } else if (xAccel>=0&&xAccel<1) {//Right
-        pushMatrix();
-        scale(1, 1);
-        player.idleAnimation();
-        popMatrix();
-        text("Right", width/2, height/1.5);
-      }
-      else if (xAccel<0&&yAccel!=0) {
+    if (xAccel<0&&xAccel>-1) {//Left
+      pushMatrix();
+      translate(idle[idlecurrentFrame].width+x1*2, 0);
+      scale(-1, 1);
+      player.idleAnimation();
+      popMatrix();
+      text("Left", width/2, height/1.5);
+    } else if (xAccel>=0&&xAccel<1) {//Right
+      pushMatrix();
+      scale(1, 1);
+      player.idleAnimation();
+      popMatrix();
+      text("Right", width/2, height/1.5);
+    } else if (xAccel<0&&yAccel!=0) {
       pushMatrix();
       translate(fall[fallcurrentFrame].width+x1*2, 0);
       scale(-1, 1);
@@ -162,9 +162,11 @@ class Player {
   }
 
   void collision() {
-    if (y1>=height/1.2&&yAccel>=0) {
+    if (y1>=baseLine&&yAccel>=0) {
       yAccel=0;
-      y1=height/1.2+1;
+      y1=baseLine+1;
+    } else if (yAccel>-10&&keyPressed==true&&upPressed==true) { //Makes it jump multiple times
+      yAccel-=25;
     }
   }
 
