@@ -11,7 +11,7 @@ Player player;
 
 void setup() {
   pixelDensity(1);
-  player= new Player(0,0,10,14);
+  player= new Player(0,0,10,14,10);
   player.loadAllImages();
   frameRate(48);
   fullScreen();
