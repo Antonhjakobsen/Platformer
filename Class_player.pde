@@ -19,7 +19,11 @@ class Player {
   int runcurrentFrame;
   PImage[] run;
 
-  Player(float x, float y, int idlenumFrames, int fallnumFrames, int runnumFrames) {
+  int jumpnumFrames;
+  int jumpcurrentFrame;
+  PImage[] jump;
+
+  Player(float x, float y, int idlenumFrames, int fallnumFrames, int runnumFrames, int jumpnumFrames) {
     this.x=x;
     this.y=y;
 
@@ -31,6 +35,9 @@ class Player {
 
     this.runnumFrames=runnumFrames;
     this.fallcurrentFrame=0;
+
+    this.jumpnumFrames=jumpnumFrames;
+    this.jumpcurrentFrame=0;
   }
 
   void loadIdle() {
@@ -53,6 +60,13 @@ class Player {
       run[i]=loadImage("img/Character/individual_sheets/run/"+i+".gif");
     }
   }
+  
+  void loadJump(){
+   jump=new PImage[jumpnumFrames];
+   for(int i=0; i<runnumFrames; i++){
+    jump[i]=loadImage("img/Character/individual_sheets/run/"+i+".gif"); 
+   }
+  }
 
   void idleAnimation() {
     idlecurrentFrame = (idlecurrentFrame+1) % idlenumFrames;  // Use % to cycle through frames
@@ -74,6 +88,14 @@ class Player {
     int offset = width/2;
     for (int i = 0; i < width; i += width) {
       image(run[(runcurrentFrame+offset) % runnumFrames], x, y);
+    }
+  }
+
+  void jumpAnimation() {
+    jumpcurrentFrame=(jumpcurrentFrame+1) & jumpnumFrames;
+    int offset=width/2;
+    for (int i = 0; i< width; i+=width) {
+      image(jump[(jumpcurrentFrame+offset)%jumpnumFrames], x, y);
     }
   }
 
@@ -109,21 +131,20 @@ class Player {
   }
 
   void displayPlayer() {
-      if (xAccel<0&&xAccel>-1&&yAccel==0) {//Left
-        pushMatrix();
-        translate(idle[idlecurrentFrame].width+x*2, 0);
-        scale(-1, 1);
-        player.idleAnimation();
-        popMatrix();
-        text("Left", width/2, height/1.5);
-      } else if (xAccel>=0&&xAccel<1&&yAccel==0) {//Right
-        pushMatrix();
-        scale(1, 1);
-        player.idleAnimation();
-        popMatrix();
-        text("Right", width/2, height/1.5);
-      }
-      else if (xAccel<0&&yAccel!=0) {
+    if (xAccel<0&&xAccel>-1&&yAccel==0) {//Left
+      pushMatrix();
+      translate(idle[idlecurrentFrame].width+x*2, 0);
+      scale(-1, 1);
+      player.idleAnimation();
+      popMatrix();
+      text("Left", width/2, height/1.5);
+    } else if (xAccel>=0&&xAccel<1&&yAccel==0) {//Right
+      pushMatrix();
+      scale(1, 1);
+      player.idleAnimation();
+      popMatrix();
+      text("Right", width/2, height/1.5);
+    } else if (xAccel<0&&yAccel!=0) {
       pushMatrix();
       translate(fall[fallcurrentFrame].width+x*2, 0);
       scale(-1, 1);
@@ -155,6 +176,7 @@ class Player {
     loadIdle();
     loadFall();
     loadRun();
+    loadJump();
   }
 
   void collision() {
