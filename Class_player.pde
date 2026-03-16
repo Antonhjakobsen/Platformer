@@ -62,7 +62,7 @@ class Player {
   }
 
   void loadJump() {
-    jump=new PImage[jumpnumFrames];
+    jump = new PImage[jumpnumFrames];
     for (int i=0; i<jumpnumFrames; i++) {
       jump[i]=loadImage("img/Character/individual_sheets/jump/"+i+".gif");
     }
@@ -92,9 +92,9 @@ class Player {
   }
 
   void jumpAnimation() {
-    jumpcurrentFrame=(jumpcurrentFrame+1) & jumpnumFrames;
+    jumpcurrentFrame = (jumpcurrentFrame+1) % jumpnumFrames;
     int offset=width/2;
-    for (int i = 0; i< width; i+=width) {
+    for (int i = 0; i < width; i += width) {
       image(jump[(jumpcurrentFrame+offset) % jumpnumFrames], x, y);
     }
   }
@@ -146,25 +146,30 @@ class Player {
       text("Right", width/2, height/1.5);
     } else if (xAccel<0&&yAccel!=0) {
       pushMatrix();
-      translate(fall[fallcurrentFrame].width+x*2, 0);
-      scale(-1, 1);
       if (yAccel>0) {
+        translate(fall[fallcurrentFrame].width+x*2, 0);
+        scale(-1, 1);
         player.fallAnimation();
+        print("fall ");
       } else if (yAccel<0) {
+        translate(jump[jumpcurrentFrame].width+x*2, 0);
+        scale(-1, 1);
         player.jumpAnimation();
+        print("jump ");
       }
       popMatrix();
-      print("fall/jump ");
     } else if (yAccel!=0) {
       if (yAccel>0) {
         player.fallAnimation();
+        print("fall ");
       } else if (yAccel<0) {
         player.jumpAnimation();
+        print("jump ");
       }
       print("fall ");
     } else if (xAccel<1) {
       pushMatrix();
-      translate(fall[fallcurrentFrame].width+x*2, 0);
+      translate(run[runcurrentFrame].width+x*2, 0);
       scale(-1, 1);
       player.runAnimation();
       popMatrix();
@@ -207,6 +212,8 @@ class Player {
     text(x, width/2, height/2);
     text(xAccel, width/2+200, height/2);
     text(yAccel, width/2+200, height/2+20);
+    text(jumpcurrentFrame, width/2+200, height/2+40);
+    text(runcurrentFrame, width/2+200, height/2+60);
     fill(0);
   }
 }
