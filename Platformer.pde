@@ -1,5 +1,3 @@
-PImage design;
-
 boolean leftPressed;
 boolean rightPressed;
 boolean upPressed;

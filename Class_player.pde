@@ -1,6 +1,6 @@
 class Player {
-  float x1;
-  float y1;
+  float x;
+  float y;
   float xAccel;
   float yAccel;
   float accelerationLimit = 10;
@@ -19,9 +19,9 @@ class Player {
   int runcurrentFrame;
   PImage[] run;
 
-  Player(float x1, float y1, int idlenumFrames, int fallnumFrames, int runnumFrames) {
-    this.x1=x1;
-    this.y1=y1;
+  Player(float x, float y, int idlenumFrames, int fallnumFrames, int runnumFrames) {
+    this.x=x;
+    this.y=y;
 
     this.idlenumFrames=idlenumFrames;
     this.idlecurrentFrame=0;
@@ -31,10 +31,6 @@ class Player {
 
     this.runnumFrames=runnumFrames;
     this.fallcurrentFrame=0;
-  }
-
-  void loadDesign() {
-    design=loadImage("img/Character/individual_sheets/design.png");
   }
 
   void loadIdle() {
@@ -62,14 +58,14 @@ class Player {
     idlecurrentFrame = (idlecurrentFrame+1) % idlenumFrames;  // Use % to cycle through frames
     int offset = width/2;
     for (int i = 0; i < width; i += width) {
-      image(idle[(idlecurrentFrame+offset) % idlenumFrames], x1, y1);
+      image(idle[(idlecurrentFrame+offset) % idlenumFrames], x, y);
     }
   }
   void fallAnimation() {
     fallcurrentFrame = (fallcurrentFrame+1) % fallnumFrames;  // Use % to cycle through frames
     int offset = width/2;
     for (int i = 0; i < width; i += width) {
-      image(fall[(fallcurrentFrame+offset) % fallnumFrames], x1, y1);
+      image(fall[(fallcurrentFrame+offset) % fallnumFrames], x, y);
     }
   }
 
@@ -77,7 +73,7 @@ class Player {
     runcurrentFrame = (runcurrentFrame+1) % runnumFrames;  // Use % to cycle through frames
     int offset = width/2;
     for (int i = 0; i < width; i += width) {
-      image(run[(runcurrentFrame+offset) % runnumFrames], x1, y1);
+      image(run[(runcurrentFrame+offset) % runnumFrames], x, y);
     }
   }
 
@@ -101,22 +97,21 @@ class Player {
 
   // Player Axis Y Acceleration
   void playerAY() {
-    if (keyPressed==true&&upPressed==true&&y1>baseLine) {
+    if (keyPressed==true&&upPressed==true&&y>baseLine) {
       yAccel-=25;
     }
   }
 
   void grav() {
-    if (y1<baseLine) {
+    if (y<baseLine) {
       yAccel+=1;
     }
   }
 
   void displayPlayer() {
-
       if (xAccel<0&&xAccel>-1&&yAccel==0) {//Left
         pushMatrix();
-        translate(idle[idlecurrentFrame].width+x1*2, 0);
+        translate(idle[idlecurrentFrame].width+x*2, 0);
         scale(-1, 1);
         player.idleAnimation();
         popMatrix();
@@ -130,7 +125,7 @@ class Player {
       }
       else if (xAccel<0&&yAccel!=0) {
       pushMatrix();
-      translate(fall[fallcurrentFrame].width+x1*2, 0);
+      translate(fall[fallcurrentFrame].width+x*2, 0);
       scale(-1, 1);
       player.fallAnimation();
       popMatrix();
@@ -140,7 +135,7 @@ class Player {
       print("fall ");
     } else if (xAccel<1) {
       pushMatrix();
-      translate(fall[fallcurrentFrame].width+x1*2, 0);
+      translate(fall[fallcurrentFrame].width+x*2, 0);
       scale(-1, 1);
       player.runAnimation();
       popMatrix();
@@ -152,21 +147,20 @@ class Player {
   }
 
   void movePlayer() {
-    x1+=xAccel;
-    y1+=yAccel;
+    x+=xAccel;
+    y+=yAccel;
   }
 
   void loadAllImages() {
-    loadDesign();
     loadIdle();
     loadFall();
     loadRun();
   }
 
   void collision() {
-    if (y1>=baseLine&&yAccel>=0) {
+    if (y>=baseLine&&yAccel>=0) {
       yAccel=0;
-      y1=baseLine+1;
+      y=baseLine+1;
     } else if (yAccel>-10&&keyPressed==true&&upPressed==true) { //Makes it jump multiple times
       yAccel-=25;
     }
@@ -180,7 +174,7 @@ class Player {
     movePlayer();
     displayPlayer();
     fill(255);
-    text(x1, width/2, height/2);
+    text(x, width/2, height/2);
     text(xAccel, width/2+200, height/2);
     text(yAccel, width/2+200, height/2+20);
     fill(0);
