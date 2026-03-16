@@ -19,7 +19,7 @@ class Player {
   int runcurrentFrame;
   PImage[] run;
 
-  int jumpnumFrames;
+  int jumpnumFrames;  // The number of frames in the animation
   int jumpcurrentFrame;
   PImage[] jump;
 
@@ -60,12 +60,12 @@ class Player {
       run[i]=loadImage("img/Character/individual_sheets/run/"+i+".gif");
     }
   }
-  
-  void loadJump(){
-   jump=new PImage[jumpnumFrames];
-   for(int i=0; i<runnumFrames; i++){
-    jump[i]=loadImage("img/Character/individual_sheets/run/"+i+".gif"); 
-   }
+
+  void loadJump() {
+    jump=new PImage[jumpnumFrames];
+    for (int i=0; i<jumpnumFrames; i++) {
+      jump[i]=loadImage("img/Character/individual_sheets/jump/"+i+".gif");
+    }
   }
 
   void idleAnimation() {
@@ -95,7 +95,7 @@ class Player {
     jumpcurrentFrame=(jumpcurrentFrame+1) & jumpnumFrames;
     int offset=width/2;
     for (int i = 0; i< width; i+=width) {
-      image(jump[(jumpcurrentFrame+offset)%jumpnumFrames], x, y);
+      image(jump[(jumpcurrentFrame+offset) % jumpnumFrames], x, y);
     }
   }
 
@@ -148,11 +148,19 @@ class Player {
       pushMatrix();
       translate(fall[fallcurrentFrame].width+x*2, 0);
       scale(-1, 1);
-      player.fallAnimation();
+      if (yAccel>0) {
+        player.fallAnimation();
+      } else if (yAccel<0) {
+        player.jumpAnimation();
+      }
       popMatrix();
-      print("fall ");
+      print("fall/jump ");
     } else if (yAccel!=0) {
-      player.fallAnimation();
+      if (yAccel>0) {
+        player.fallAnimation();
+      } else if (yAccel<0) {
+        player.jumpAnimation();
+      }
       print("fall ");
     } else if (xAccel<1) {
       pushMatrix();
