@@ -6,6 +6,7 @@ class Player {
   float accelerationLimit = 10;
   float friction = 0.60;
   float baseLine = height/1.2;
+  int enff;
 
   int idlenumFrames;  // The number of frames in the animation
   int idlecurrentFrame;
@@ -201,12 +202,34 @@ class Player {
     }
   }
 
+  void drawBez() {
+    if (enff==143) {
+      enff=0;
+    } else {
+      enff++;
+    }
+    xDotPrev[enff]=xDot[enff];
+    yDotPrev[enff]=yDot[enff];
+    xDot[enff]=x;
+    yDot[enff]=y;
+    if(millis()>100){
+    for (int i=0; i<143; i++) {
+      fill(255);
+      if(i>3){
+      bezier(xDot[i]+idle[1].width/2,xDotPrev[i]+idle[1].width/2, yDot[i]+idle[1].height/2,yDot[i-1]+idle[1].height/2,xDot[i]+idle[1].width/2,xDot[i-3]+idle[1].width/2, yDot[i]+idle[1].height/2,yDot[i-3]+idle[1].height/2);
+      }
+      fill(0);
+    }
+    }
+  }
+
   void engine() {
     collision();
     grav();
     playerAX();
     playerAY();
     movePlayer();
+    drawBez();
     displayPlayer();
     fill(255);
     text(x, width/2, height/2);

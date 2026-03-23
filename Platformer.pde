@@ -7,9 +7,18 @@ boolean flip;
 
 Player player;
 
+float[] xDot;
+float[] yDot;
+float[] xDotPrev;
+float[] yDotPrev;
+
 void setup() {
   pixelDensity(1);
-  player= new Player(0,0,10,14,10,6);
+  xDot=new float[144];
+  yDot=new float[144];
+  xDotPrev=new float[144];
+  yDotPrev=new float[144];
+  player= new Player(0, 0, 10, 14, 10, 6);
   player.loadAllImages();
   frameRate(48);
   fullScreen();
