@@ -15,6 +15,8 @@ class Player {
   float xDotLast;
   float yDotLast;
 
+  int animationIndex; //idle=0, fall=1, run=2, jump=3
+
   int idlenumFrames;  // The number of frames in the animation
   int idlecurrentFrame;
   PImage[] idle;
@@ -144,12 +146,14 @@ class Player {
       translate(idle[idlecurrentFrame].width+x*2, 0);
       scale(-1, 1);
       player.idleAnimation();
+      animationIndex=0;
       popMatrix();
       text("Left", width/2, height/1.5);
     } else if (xAccel>=0&&xAccel<1&&yAccel==0) {//Right
       pushMatrix();
       scale(1, 1);
       player.idleAnimation();
+      animationIndex=0;
       popMatrix();
       text("Right", width/2, height/1.5);
     } else if (xAccel<0&&yAccel!=0) {
@@ -158,11 +162,13 @@ class Player {
         translate(fall[fallcurrentFrame].width+x*2, 0);
         scale(-1, 1);
         player.fallAnimation();
+        animationIndex=1;
         print("fall ");
       } else if (yAccel<0) {
         translate(jump[jumpcurrentFrame].width+x*2, 0);
         scale(-1, 1);
         player.jumpAnimation();
+        animationIndex=2;
         print("jump ");
       }
       popMatrix();
@@ -170,16 +176,18 @@ class Player {
       if (yAccel>0) {
         player.fallAnimation();
         print("fall ");
+        animationIndex=2;
       } else if (yAccel<0) {
         player.jumpAnimation();
+        animationIndex=3;
         print("jump ");
       }
-      print("fall ");
     } else if (xAccel<1) {
       pushMatrix();
       translate(run[runcurrentFrame].width+x*2, 0);
       scale(-1, 1);
       player.runAnimation();
+      animationIndex=3;
       popMatrix();
       print("running ");
     } else {
@@ -221,17 +229,17 @@ class Player {
     yDot[enff]=y;
     if (millis()>100) {
       for (int i=0; i<143; i++) {
-        if(enff!=0){
+        if (enff!=0) {
           xDot[enff-1]=xDot[enff];
-        } else{
+        } else {
           xDotLast=xDot[143];
         }
-        if (i!=0) {
+        if (i>0) {
           xDotPrev[i]=xDot[i-1];
           yDotPrev[i]=yDot[i-1];
         } else {
-          xDotPrev[i]=xDot[143];
-          yDotPrev[i]=yDot[143];
+          xDotPrev[i]=xDot[0];
+          yDotPrev[i]=yDot[0];
         }
 
         fill(255);
@@ -241,17 +249,50 @@ class Player {
         xPosPoint2 = xDotPrev[i]+xC;
         yPosPoint1 = yDot[i]+yC;
         yPosPoint2 = yDotPrev[i]+yC;
-        float offShootXP1=xPosPoint1+random(-5, 5);
-        float offShootXP2=xPosPoint2+random(-5, 5);
-        float offShootYP1=yPosPoint1+random(-5, 5);
-        float offShootYP2=yPosPoint2+random(-5, 5);
+        float offShootXP1=xPosPoint1+random(-3, 3);
+        float offShootXP2=xPosPoint2+random(-3, 3);
+        float offShootYP1=yPosPoint1+random(-3, 3);
+        float offShootYP2=yPosPoint2+random(-3, 3);
+
+        if (i!=143) {
+          xDotLast=xDot[i+1];
+          yDotLast=xDot[i+1];
+        } else {
+          xDotLast=xDot[0];
+          yDotLast=yDot[0];
+        }
+
         noFill();
-        bezier(xPosPoint1, yPosPoint1, offShootXP1, offShootYP1, offShootXP2, offShootYP2, xPosPoint2, yPosPoint2);
+        if (i-1==enff) {
+          bezier(xDot[143]+xC, yDot[143]+yC, xDot[143]+xC+random(-3, 3), yDot[143]+yC+random(-3, 3), xDot[142]+xC+random(-3, 3), yDot[142]+yC+random(-3, 3), xDot[142]+xC, yDot[142]+yC);
+          bezier(xDot[0]+xC, yDot[0]+yC, xDot[0]+xC+random(-3, 3), yDot[0]+yC+random(-3, 3), xDot[143]+xC+random(-3, 3), yDot[143]+yC+random(-3, 3), xDot[143]+xC, yDot[143]+yC);
+        } else {
+          bezier(xPosPoint1, yPosPoint1, offShootXP1, offShootYP1, offShootXP2, offShootYP2, xPosPoint2, yPosPoint2);
+        }
+        //eksempel på bez kurve connect fra last til first bezier(xDot[1]+xC, yDot[1]+yC, xDot[1]+xC+random(-5,5), yDot[1]+yC+random(-5,5), xDot[0]+xC+random(-5,5), yDot[0]+yC+random(-5,5), xDot[0]+xC, yDot[0]+yC); heraf skal enff være = 1
         fill(0);
       }
     }
   }
-
+  
+    /*void drawShadow() {
+    if (animationIndex==0) {
+      idlecurrentFrameS = (idlecurrentFrameS+1) % idlenumFramesS;  // Use % to cycle through frames
+      int offset = width/2;
+      for (int i = 0; i < width; i += width) {
+        image(idle[(idlecurrentFrameS+offset) % idlenumFramesS], x, y);
+      }
+    } else if (animationIndex==1) {
+      
+    } else if (animationIndex==2) {
+      
+    } else if (animationIndex==3) {
+      
+    }
+  }
+  
+  til at animere skyggen
+*/
   void engine() {
     collision();
     grav();
