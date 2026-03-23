@@ -7,6 +7,13 @@ class Player {
   float friction = 0.60;
   float baseLine = height/1.2;
   int enff;
+  float xPosPoint1;
+  float xPosPoint2;
+  float yPosPoint1;
+  float yPosPoint2;
+
+  float xDotLast;
+  float yDotLast;
 
   int idlenumFrames;  // The number of frames in the animation
   int idlecurrentFrame;
@@ -203,23 +210,45 @@ class Player {
   }
 
   void drawBez() {
+    strokeWeight(1);
+    stroke(60, 120, 255);
     if (enff==143) {
       enff=0;
     } else {
       enff++;
     }
-    xDotPrev[enff]=xDot[enff];
-    yDotPrev[enff]=yDot[enff];
     xDot[enff]=x;
     yDot[enff]=y;
-    if(millis()>100){
-    for (int i=0; i<143; i++) {
-      fill(255);
-      if(i>3){
-      bezier(xDot[i]+idle[1].width/2,xDotPrev[i]+idle[1].width/2, yDot[i]+idle[1].height/2,yDot[i-1]+idle[1].height/2,xDot[i]+idle[1].width/2,xDot[i-3]+idle[1].width/2, yDot[i]+idle[1].height/2,yDot[i-3]+idle[1].height/2);
+    if (millis()>100) {
+      for (int i=0; i<143; i++) {
+        if(enff!=0){
+          xDot[enff-1]=xDot[enff];
+        } else{
+          xDotLast=xDot[143];
+        }
+        if (i!=0) {
+          xDotPrev[i]=xDot[i-1];
+          yDotPrev[i]=yDot[i-1];
+        } else {
+          xDotPrev[i]=xDot[143];
+          yDotPrev[i]=yDot[143];
+        }
+
+        fill(255);
+        float xC=idle[1].width/2;
+        float yC=idle[1].height/2;
+        xPosPoint1 = xDot[i]+xC;
+        xPosPoint2 = xDotPrev[i]+xC;
+        yPosPoint1 = yDot[i]+yC;
+        yPosPoint2 = yDotPrev[i]+yC;
+        float offShootXP1=xPosPoint1+random(-5, 5);
+        float offShootXP2=xPosPoint2+random(-5, 5);
+        float offShootYP1=yPosPoint1+random(-5, 5);
+        float offShootYP2=yPosPoint2+random(-5, 5);
+        noFill();
+        bezier(xPosPoint1, yPosPoint1, offShootXP1, offShootYP1, offShootXP2, offShootYP2, xPosPoint2, yPosPoint2);
+        fill(0);
       }
-      fill(0);
-    }
     }
   }
 

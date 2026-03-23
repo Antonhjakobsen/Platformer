@@ -2,6 +2,8 @@ boolean leftPressed;
 boolean rightPressed;
 boolean upPressed;
 boolean downPressed;
+float[] xDotPrev;
+float[] yDotPrev;
 
 boolean flip;
 
@@ -9,8 +11,6 @@ Player player;
 
 float[] xDot;
 float[] yDot;
-float[] xDotPrev;
-float[] yDotPrev;
 
 void setup() {
   pixelDensity(1);
