@@ -4,6 +4,14 @@ boolean upPressed;
 boolean downPressed;
 float[] xDotPrev;
 float[] yDotPrev;
+color backgroundColor;
+float xPredictR;
+float xPredictL;
+float yPredictT;
+float yPredictB;
+PImage background;
+int yInt;
+int xInt;
 
 boolean flip;
 
@@ -12,7 +20,13 @@ Player player;
 float[] xDot;
 float[] yDot;
 
+boolean jumpAvalible;
+int tick;
+
 void setup() {
+  tick=0;
+  backgroundColor=-1;
+  background=loadImage("img/Backgrounds/background1.png");
   pixelDensity(1);
   xDot=new float[144];
   yDot=new float[144];
@@ -26,8 +40,10 @@ void setup() {
 
 void draw() {
   background(55);
+  drawBackground();
   player.engine();
   drawArrowen();
+  print(" " + get(xInt,yInt)+ " ");
 }
 
 void mousePressed() {
@@ -67,6 +83,10 @@ void keyReleased() {
     downPressed = false;
   }
 }
+
+void drawBackground(){
+   image(background,0,0);
+  }
 
 void drawArrowen() {
   int padding = 15;

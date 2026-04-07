@@ -129,14 +129,12 @@ class Player {
 
   // Player Axis Y Acceleration
   void playerAY() {
-    if (keyPressed==true&&upPressed==true&&y>baseLine) {
-      yAccel-=25;
+    if(tick==3){
+     jumpAvalible=false; 
     }
-  }
-
-  void grav() {
-    if (y<baseLine) {
-      yAccel+=1;
+    if (keyPressed==true&&upPressed==true&&jumpAvalible==true) {
+        yAccel-=10;
+        tick++;
     }
   }
 
@@ -163,24 +161,24 @@ class Player {
         scale(-1, 1);
         player.fallAnimation();
         animationIndex=1;
-        print("fall ");
+        //print("fall ");
       } else if (yAccel<0) {
         translate(jump[jumpcurrentFrame].width+x*2, 0);
         scale(-1, 1);
         player.jumpAnimation();
         animationIndex=2;
-        print("jump ");
+        //print("jump ");
       }
       popMatrix();
     } else if (yAccel!=0) {
       if (yAccel>0) {
         player.fallAnimation();
-        print("fall ");
+        //print("fall ");
         animationIndex=2;
       } else if (yAccel<0) {
         player.jumpAnimation();
         animationIndex=3;
-        print("jump ");
+        //print("jump ");
       }
     } else if (xAccel<1) {
       pushMatrix();
@@ -189,32 +187,19 @@ class Player {
       player.runAnimation();
       animationIndex=3;
       popMatrix();
-      print("running ");
+      //print("running ");
     } else {
       player.runAnimation();
-      print("running 2 ");
+      //print("running 2 ");
     }
   }
 
-  void movePlayer() {
-    x+=xAccel;
-    y+=yAccel;
-  }
 
   void loadAllImages() {
     loadIdle();
     loadFall();
     loadRun();
     loadJump();
-  }
-
-  void collision() {
-    if (y>=baseLine&&yAccel>=0) {
-      yAccel=0;
-      y=baseLine+1;
-    } else if (yAccel>-10&&keyPressed==true&&upPressed==true) { //Makes it jump multiple times
-      yAccel-=25;
-    }
   }
 
   void drawBez() {
@@ -274,39 +259,76 @@ class Player {
       }
     }
   }
-  
-    /*void drawShadow() {
-    if (animationIndex==0) {
-      idlecurrentFrameS = (idlecurrentFrameS+1) % idlenumFramesS;  // Use % to cycle through frames
-      int offset = width/2;
-      for (int i = 0; i < width; i += width) {
-        image(idle[(idlecurrentFrameS+offset) % idlenumFramesS], x, y);
-      }
-    } else if (animationIndex==1) {
-      
-    } else if (animationIndex==2) {
-      
-    } else if (animationIndex==3) {
-      
+
+  /*void drawShadow() {
+   if (animationIndex==0) {
+   idlecurrentFrameS = (idlecurrentFrameS+1) % idlenumFramesS;  // Use % to cycle through frames
+   int offset = width/2;
+   for (int i = 0; i < width; i += width) {
+   image(idle[(idlecurrentFrameS+offset) % idlenumFramesS], x, y);
+   }
+   } else if (animationIndex==1) {
+   
+   } else if (animationIndex==2) {
+   
+   } else if (animationIndex==3) {
+   
+   }
+   }
+   til at animere skyggen
+   */
+  void predictions() {
+    yPredictT = y+idle[1].width/2 + yAccel;
+    yPredictB = y+idle[1].height + yAccel;
+    xPredictR = x-idle[1].width + xAccel;
+    xPredictL = x + xAccel;
+  }
+
+  void xMove() {
+    yInt=int(y);
+    int xPredictRInt=int(xPredictR);
+    int xPredictLInt=int(xPredictL);
+    if (get(xPredictRInt, yInt)==backgroundColor||get(xPredictLInt, yInt)==backgroundColor) {
+      x=x+xAccel;
+    } else {
+      xAccel=xAccel*0.9;
+      print(" x stop ");
     }
   }
-  
-  til at animere skyggen
-*/
+
+  void yMove() {
+    int yPredictTInt=int(yPredictT);
+    int yPredictBInt=int(yPredictB);
+    xInt=int(x);
+    if (get(xInt, yPredictTInt)==backgroundColor||get(xInt, yPredictBInt)==backgroundColor) {
+      y=y+yAccel;
+    } else {
+      yAccel=0;
+      tick=0;
+      jumpAvalible=true;
+      print(" y stop ");
+    }
+    if (get(xInt, yPredictBInt+1)==backgroundColor) {
+      yAccel+=1;
+    }
+  }
+
   void engine() {
-    collision();
-    grav();
     playerAX();
     playerAY();
-    movePlayer();
+    predictions();
+    xMove();
+    yMove();
     drawBez();
     displayPlayer();
     fill(255);
+    /*
     text(x, width/2, height/2);
-    text(xAccel, width/2+200, height/2);
-    text(yAccel, width/2+200, height/2+20);
-    text(jumpcurrentFrame, width/2+200, height/2+40);
-    text(runcurrentFrame, width/2+200, height/2+60);
-    fill(0);
+     text(xAccel, width/2+200, height/2);
+     text(yAccel, width/2+200, height/2+20);
+     text(jumpcurrentFrame, width/2+200, height/2+40);
+     text(runcurrentFrame, width/2+200, height/2+60);
+     fill(0);
+     */
   }
 }
