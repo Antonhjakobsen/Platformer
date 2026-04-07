@@ -278,37 +278,38 @@ class Player {
    til at animere skyggen
    */
   void predictions() {
-    yPredictT = y+idle[1].width/2 + yAccel;
-    yPredictB = y+idle[1].height + yAccel;
-    xPredictR = x-idle[1].width + xAccel;
-    xPredictL = x + xAccel;
+    yPredictT = y + yAccel;
+    
+    yPredictB = y+idle[1].height/1.66 + yAccel;
+    
+    xPredictR = x+idle[0].width/1.8 + xAccel;
+    
+    xPredictL = x+51 + xAccel;
   }
 
   void xMove() {
     yInt=int(y);
     int xPredictRInt=int(xPredictR);
     int xPredictLInt=int(xPredictL);
-    if (get(xPredictRInt, yInt)==backgroundColor||get(xPredictLInt, yInt)==backgroundColor) {
+    if (get(xPredictRInt, yInt)==backgroundColor&&get(xPredictRInt, yInt+idle[0].height-51)==backgroundColor&&get(xPredictLInt, yInt)==backgroundColor&&get(xPredictLInt, yInt+idle[0].height-51)==backgroundColor) {
       x=x+xAccel;
     } else {
-      xAccel=xAccel*0.9;
-      print(" x stop ");
+      xAccel=0;
+      print(" x stop: " + "L: " + get(xPredictLInt,yInt+idle[0].height-51) + " R: " + get(xPredictRInt,yInt+idle[0].height-51));
     }
   }
 
   void yMove() {
-    int yPredictTInt=int(yPredictT);
     int yPredictBInt=int(yPredictB);
     xInt=int(x);
-    if (get(xInt, yPredictTInt)==backgroundColor||get(xInt, yPredictBInt)==backgroundColor) {
+    if (get(xInt+idle[0].width/2, yPredictBInt)==backgroundColor) {
       y=y+yAccel;
     } else {
       yAccel=0;
       tick=0;
       jumpAvalible=true;
-      print(" y stop ");
     }
-    if (get(xInt, yPredictBInt+1)==backgroundColor) {
+    if (get(xInt+idle[0].width/2,yPredictBInt+1)==backgroundColor) {
       yAccel+=1;
     }
   }
@@ -320,7 +321,6 @@ class Player {
     xMove();
     yMove();
     drawBez();
-    displayPlayer();
     fill(255);
     /*
     text(x, width/2, height/2);

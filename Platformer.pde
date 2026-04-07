@@ -39,11 +39,11 @@ void setup() {
 }
 
 void draw() {
-  background(55);
   drawBackground();
   player.engine();
+  player.displayPlayer();
   drawArrowen();
-  print(" " + get(xInt,yInt)+ " ");
+  text(player.yAccel, width/2+200, height/2+20);
 }
 
 void mousePressed() {
@@ -85,7 +85,7 @@ void keyReleased() {
 }
 
 void drawBackground(){
-   image(background,0,0);
+   image(background,-10,-500);
   }
 
 void drawArrowen() {
