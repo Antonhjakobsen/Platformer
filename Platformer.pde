@@ -85,7 +85,7 @@ void keyReleased() {
 }
 
 void drawBackground(){
-   image(background,-10,-500);
+   image(background,-10,-50);
   }
 
 void drawArrowen() {
