@@ -33,6 +33,8 @@ class Player {
   int jumpcurrentFrame;
   PImage[] jump;
 
+  PImage[] shadowArray;
+
   Player(float x, float y, int idlenumFrames, int fallnumFrames, int runnumFrames, int jumpnumFrames) {
     this.x=x;
     this.y=y;
@@ -129,12 +131,12 @@ class Player {
 
   // Player Axis Y Acceleration
   void playerAY() {
-    if(tick==3){
-     jumpAvalible=false; 
+    if (tick==3) {
+      jumpAvalible=false;
     }
     if (keyPressed==true&&upPressed==true&&jumpAvalible==true) {
-        yAccel-=10;
-        tick++;
+      yAccel-=10;
+      tick++;
     }
   }
 
@@ -256,34 +258,30 @@ class Player {
         }
         //eksempel på bez kurve connect fra last til first bezier(xDot[1]+xC, yDot[1]+yC, xDot[1]+xC+random(-5,5), yDot[1]+yC+random(-5,5), xDot[0]+xC+random(-5,5), yDot[0]+yC+random(-5,5), xDot[0]+xC, yDot[0]+yC); heraf skal enff være = 1
         fill(0);
+        /*
+        Til animation af skyggen
+        if (animationIndex==0) {//idle
+          if (enff>0) {
+            shadowArray[enff]=loadImage("img/Character/individual_sheets/idle/0.gif");
+          } else {
+            shadowArray[0]=idle[0];
+          }
+        } else if (animationIndex==1) {//fall
+        } else if (animationIndex==2) {//run
+        } else if (animationIndex==3) {//jump
+        } 
+        */
       }
     }
   }
 
-  /*void drawShadow() {
-   if (animationIndex==0) {
-   idlecurrentFrameS = (idlecurrentFrameS+1) % idlenumFramesS;  // Use % to cycle through frames
-   int offset = width/2;
-   for (int i = 0; i < width; i += width) {
-   image(idle[(idlecurrentFrameS+offset) % idlenumFramesS], x, y);
-   }
-   } else if (animationIndex==1) {
-   
-   } else if (animationIndex==2) {
-   
-   } else if (animationIndex==3) {
-   
-   }
-   }
-   til at animere skyggen
-   */
   void predictions() {
     yPredictT = y + yAccel;
-    
+
     yPredictB = y+idle[1].height/1.66 + yAccel;
-    
+
     xPredictR = x+idle[0].width/1.8 + xAccel;
-    
+
     xPredictL = x+51 + xAccel;
   }
 
@@ -295,7 +293,7 @@ class Player {
       x=x+xAccel;
     } else {
       xAccel=0;
-      print(" x stop: " + "L: " + get(xPredictLInt,yInt+idle[0].height-51) + " R: " + get(xPredictRInt,yInt+idle[0].height-51));
+      print(" x stop: " + "L: " + get(xPredictLInt, yInt+idle[0].height-51) + " R: " + get(xPredictRInt, yInt+idle[0].height-51));
     }
   }
 
@@ -309,9 +307,12 @@ class Player {
       tick=0;
       jumpAvalible=true;
     }
-    if (get(xInt+idle[0].width/2,yPredictBInt+1)==backgroundColor) {
+    if (get(xInt+idle[0].width/2, yPredictBInt+1)==backgroundColor) {
       yAccel+=1;
     }
+  }
+
+  void displayShadow() {
   }
 
   void engine() {

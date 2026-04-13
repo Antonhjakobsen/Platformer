@@ -34,6 +34,7 @@ void setup() {
   yDotPrev=new float[144];
   player= new Player(0, 0, 10, 14, 10, 6);
   player.loadAllImages();
+  player.shadowArray=new PImage[143];
   frameRate(48);
   fullScreen();
 }
