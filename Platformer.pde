@@ -53,6 +53,7 @@ void mousePressed() {
 
 void mouseReleased() {
   flip=false;
+  player.swapPos();
 }
 
 void keyPressed() {
@@ -64,6 +65,8 @@ void keyPressed() {
   }
   if (keyCode == UP) {
     upPressed = true;
+    player.playerAY();
+    flip =true;
   }
   if (keyCode == DOWN) {
     downPressed = true;
@@ -79,6 +82,7 @@ void keyReleased() {
   }
   if (keyCode == UP) {
     upPressed = false;
+    flip =false;
   }
   if (keyCode == DOWN) {
     downPressed = false;

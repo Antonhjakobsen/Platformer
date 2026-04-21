@@ -131,11 +131,14 @@ class Player {
 
   // Player Axis Y Acceleration
   void playerAY() {
-    if (tick==3) {
+    if (tick==2) {
       jumpAvalible=false;
     }
-    if (keyPressed==true&&upPressed==true&&jumpAvalible==true) {
-      yAccel-=10;
+    if (keyPressed==true&&upPressed==true&&jumpAvalible==true&&flip==false) {
+      yAccel-=20;
+      if(yAccel<-20){
+       yAccel=-20; 
+      }
       tick++;
     }
   }
@@ -194,7 +197,7 @@ class Player {
       player.runAnimation();
       //print("running 2 ");
     }
-  }
+  }  
 
 
   void loadAllImages() {
@@ -312,12 +315,15 @@ class Player {
     }
   }
 
+  void swapPos(){
+    
+  }
+
   void displayShadow() {
   }
 
   void engine() {
     playerAX();
-    playerAY();
     predictions();
     xMove();
     yMove();
