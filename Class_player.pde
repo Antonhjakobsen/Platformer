@@ -136,8 +136,8 @@ class Player {
     }
     if (keyPressed==true&&upPressed==true&&jumpAvalible==true&&flip==false) {
       yAccel-=20;
-      if(yAccel<-20){
-       yAccel=-20; 
+      if (yAccel<-20) {
+        yAccel=-20;
       }
       tick++;
     }
@@ -197,7 +197,7 @@ class Player {
       player.runAnimation();
       //print("running 2 ");
     }
-  }  
+  }
 
 
   void loadAllImages() {
@@ -211,12 +211,15 @@ class Player {
     strokeWeight(1);
     stroke(60, 120, 255);
     if (enff==143) {
+      image(idle[0], xDot[0], yDot[0]);
       enff=0;
     } else {
+      image(idle[0], xDot[enff+1], yDot[enff+1]);
       enff++;
     }
     xDot[enff]=x;
     yDot[enff]=y;
+    //enff er indekset for den værdi som mest nyligt blev opbevaret
     if (millis()>100) {
       for (int i=0; i<143; i++) {
         if (enff!=0) {
@@ -246,7 +249,7 @@ class Player {
 
         if (i!=143) {
           xDotLast=xDot[i+1];
-          yDotLast=xDot[i+1];
+          yDotLast=yDot[i+1];
         } else {
           xDotLast=xDot[0];
           yDotLast=yDot[0];
@@ -261,31 +264,20 @@ class Player {
         }
         //eksempel på bez kurve connect fra last til first bezier(xDot[1]+xC, yDot[1]+yC, xDot[1]+xC+random(-5,5), yDot[1]+yC+random(-5,5), xDot[0]+xC+random(-5,5), yDot[0]+yC+random(-5,5), xDot[0]+xC, yDot[0]+yC); heraf skal enff være = 1
         fill(0);
-        /*
-        Til animation af skyggen
-        if (animationIndex==0) {//idle
-          if (enff>0) {
-            shadowArray[enff]=loadImage("img/Character/individual_sheets/idle/0.gif");
-          } else {
-            shadowArray[0]=idle[0];
-          }
-        } else if (animationIndex==1) {//fall
-        } else if (animationIndex==2) {//run
-        } else if (animationIndex==3) {//jump
-        } 
-        */
       }
     }
   }
 
   void predictions() {
-    yPredictT = y + yAccel;
+    yPredictT = y+idle[0].width/40 + yAccel;
 
     yPredictB = y+idle[1].height/1.66 + yAccel;
 
     xPredictR = x+idle[0].width/1.8 + xAccel;
+    //line(xPredictR,yPredictT,xPredictR,yPredictB);
 
     xPredictL = x+51 + xAccel;
+    //line(xPredictL,yPredictT,xPredictL,yPredictB);
   }
 
   void xMove() {
@@ -302,6 +294,7 @@ class Player {
 
   void yMove() {
     int yPredictBInt=int(yPredictB);
+    int yPredictTInt=int(yPredictT);
     xInt=int(x);
     if (get(xInt+idle[0].width/2, yPredictBInt)==backgroundColor) {
       y=y+yAccel;
@@ -313,13 +306,28 @@ class Player {
     if (get(xInt+idle[0].width/2, yPredictBInt+1)==backgroundColor) {
       yAccel+=1;
     }
+    if(get(xInt+idle[0].width/2, yPredictTInt-1)!=backgroundColor){
+      yAccel+=1;
+    }
   }
 
-  void swapPos(){
-    
+  void swapPos() {
   }
 
   void displayShadow() {
+    /*
+        Til animation af skyggen forsøg 1
+     if (animationIndex==0) {//idle
+     if (enff>0) {
+     shadowArray[enff]=loadImage("img/Character/individual_sheets/idle/0.gif");
+     } else {
+     shadowArray[0]=idle[0];
+     }
+     } else if (animationIndex==1) {//fall
+     } else if (animationIndex==2) {//run
+     } else if (animationIndex==3) {//jump
+     }
+     */
   }
 
   void engine() {
@@ -328,6 +336,7 @@ class Player {
     xMove();
     yMove();
     drawBez();
+    displayShadow();
     fill(255);
     /*
     text(x, width/2, height/2);
