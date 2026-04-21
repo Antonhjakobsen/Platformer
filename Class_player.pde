@@ -269,27 +269,37 @@ class Player {
   }
 
   void predictions() {
-    yPredictT = y+idle[0].width/40 + yAccel;
+    yPredictT = y+idle[0].height/4 + yAccel;
 
     yPredictB = y+idle[1].height/1.66 + yAccel;
 
     xPredictR = x+idle[0].width/1.8 + xAccel;
-    //line(xPredictR,yPredictT,xPredictR,yPredictB);
 
-    xPredictL = x+51 + xAccel;
-    //line(xPredictL,yPredictT,xPredictL,yPredictB);
+    xPredictL = x-idle[0].width/1.8 + xAccel;
   }
 
   void xMove() {
     yInt=int(y);
     int xPredictRInt=int(xPredictR);
     int xPredictLInt=int(xPredictL);
-    if (get(xPredictRInt, yInt)==backgroundColor&&get(xPredictRInt, yInt+idle[0].height-51)==backgroundColor&&get(xPredictLInt, yInt)==backgroundColor&&get(xPredictLInt, yInt+idle[0].height-51)==backgroundColor) {
+    if (get(xPredictRInt, yInt)==backgroundColor&&get(xPredictRInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
       x=x+xAccel;
+      moved=true;
     } else {
       xAccel=0;
-      print(" x stop: " + "L: " + get(xPredictLInt, yInt+idle[0].height-51) + " R: " + get(xPredictRInt, yInt+idle[0].height-51));
+      print(" x stop: " +" R: " + get(xPredictRInt, yInt+idle[0].height-51));
     }
+    if (get(xPredictLInt, yInt)==backgroundColor&&get(xPredictLInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
+      x=x+xAccel;
+      moved=true;
+    } else if (moved==true) {
+    } else {
+      xAccel=0;
+      print("L: " + get(xPredictLInt, yInt+idle[0].height-51));
+    }
+    circle(xPredictR, y+idle[0].height/2, 5);
+    circle(xPredictL, y+idle[0].height/2, 5);
+    moved=false;
   }
 
   void yMove() {
@@ -306,9 +316,11 @@ class Player {
     if (get(xInt+idle[0].width/2, yPredictBInt+1)==backgroundColor) {
       yAccel+=1;
     }
-    if(get(xInt+idle[0].width/2, yPredictTInt-1)!=backgroundColor){
+    if (get(xInt+idle[0].width/2, yPredictTInt)!=backgroundColor) {
       yAccel+=1;
     }
+    circle(xInt+idle[0].width/2, yPredictTInt, 5);
+    circle(xInt+idle[0].width/2, yPredictBInt, 5);
   }
 
   void swapPos() {

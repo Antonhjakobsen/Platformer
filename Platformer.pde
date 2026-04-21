@@ -12,7 +12,7 @@ float yPredictB;
 PImage background;
 int yInt;
 int xInt;
-
+boolean moved;
 boolean flip;
 
 Player player;
