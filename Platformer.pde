@@ -2,6 +2,8 @@ boolean leftPressed;
 boolean rightPressed;
 boolean upPressed;
 boolean downPressed;
+boolean backspacePressed;
+boolean swapPosFlip2;
 float[] xDotPrev;
 float[] yDotPrev;
 color backgroundColor;
@@ -47,15 +49,6 @@ void draw() {
   text(player.yAccel, width/2+200, height/2+20);
 }
 
-void mousePressed() {
-  flip=true;
-}
-
-void mouseReleased() {
-  flip=false;
-  player.swapPos();
-}
-
 void keyPressed() {
   if (keyCode == LEFT) {
     leftPressed = true;
@@ -71,6 +64,13 @@ void keyPressed() {
   if (keyCode == DOWN) {
     downPressed = true;
   }
+  if (keyCode==BACKSPACE) {
+    backspacePressed=true;
+    //print("backspacePressed");
+    //print(backspacePressed);
+  } else{
+   backspacePressed=false; 
+  }
 }
 
 void keyReleased() {
@@ -85,13 +85,21 @@ void keyReleased() {
     flip =false;
   }
   if (keyCode == DOWN) {
-    downPressed = false;
+    if (swapPosFlip2==true) {
+      downPressed = false;
+      swapPosFlip2=false;
+    }
+  }
+  if (keyCode == BACKSPACE) {
+    if (swapPosFlip2==false) {
+      swapPosFlip2=true;
+    }
   }
 }
 
-void drawBackground(){
-   image(background,-10,-50);
-  }
+void drawBackground() {
+  image(background, -10, -50);
+}
 
 void drawArrowen() {
   int padding = 15;

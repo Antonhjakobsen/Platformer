@@ -11,7 +11,8 @@ class Player {
   float xPosPoint2;
   float yPosPoint1;
   float yPosPoint2;
-
+  boolean swapPosFlip=true;
+  float swapPosTimer;
   float xDotLast;
   float yDotLast;
 
@@ -211,11 +212,21 @@ class Player {
     strokeWeight(1);
     stroke(60, 120, 255);
     if (enff==143) {
-      image(idle[0], xDot[0], yDot[0]);
+      if (frameCount>swapPosTimer+144) {
+        image(idle[0], xDot[0], yDot[0]);//tegner skyggen
+      }
       enff=0;
+      if (frameCount<swapPosTimer+144) {
+        image(idle[0], xDot[0], yDot[0]);
+      }
     } else {
-      image(idle[0], xDot[enff+1], yDot[enff+1]);
+      if (frameCount>swapPosTimer+144) {
+        image(idle[0], xDot[enff+1], yDot[enff+1]);//tegner skyggen
+      }
       enff++;
+      if (frameCount<swapPosTimer+144) {
+        image(idle[0], xDot[enff], yDot[enff]);
+      }
     }
     xDot[enff]=x;
     yDot[enff]=y;
@@ -297,8 +308,8 @@ class Player {
       xAccel=0;
       print("L: " + get(xPredictLInt, yInt+idle[0].height-51));
     }
-    circle(xPredictR, y+idle[0].height/2, 5);
-    circle(xPredictL, y+idle[0].height/2, 5);
+    //(til at teste med)circle(xPredictR, y+idle[0].height/2, 5);
+    //(til at teste med)circle(xPredictL, y+idle[0].height/2, 5);
     moved=false;
   }
 
@@ -319,27 +330,34 @@ class Player {
     if (get(xInt+idle[0].width/2, yPredictTInt)!=backgroundColor) {
       yAccel+=1;
     }
-    circle(xInt+idle[0].width/2, yPredictTInt, 5);
-    circle(xInt+idle[0].width/2, yPredictBInt, 5);
+    //(til at teste med)circle(xInt+idle[0].width/2, yPredictTInt, 5);
+    //(til at teste med)circle(xInt+idle[0].width/2, yPredictBInt, 5);
   }
 
   void swapPos() {
-  }
+    print(" backspace pressed: ");
+    print(backspacePressed);
+    print(" flip: ");
+    print(swapPosFlip);
 
-  void displayShadow() {
-    /*
-        Til animation af skyggen forsøg 1
-     if (animationIndex==0) {//idle
-     if (enff>0) {
-     shadowArray[enff]=loadImage("img/Character/individual_sheets/idle/0.gif");
-     } else {
-     shadowArray[0]=idle[0];
-     }
-     } else if (animationIndex==1) {//fall
-     } else if (animationIndex==2) {//run
-     } else if (animationIndex==3) {//jump
-     }
-     */
+    if (frameCount>swapPosTimer+144) {
+      swapPosFlip=true;
+      if (backspacePressed==true&&swapPosFlip==true) {
+        if (enff==143) {
+          print("               swapPos             ");
+          swapPosTimer=frameCount;
+          x=xDot[0];
+          y=yDot[0];
+          swapPosFlip=false;
+        } else {
+          print("               swapPos             ");
+          swapPosTimer=frameCount;
+          x=xDot[enff+1];
+          y=yDot[enff+1];
+          swapPosFlip=false;
+        }
+      }
+    }
   }
 
   void engine() {
@@ -347,8 +365,8 @@ class Player {
     predictions();
     xMove();
     yMove();
+    swapPos();
     drawBez();
-    displayShadow();
     fill(255);
     /*
     text(x, width/2, height/2);
