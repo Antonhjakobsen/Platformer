@@ -136,6 +136,7 @@ class Player {
       jumpAvalible=false;
     }
     if (keyPressed==true&&upPressed==true&&jumpAvalible==true&&flip==false) {
+      yAccel=0;
       yAccel-=20;
       if (yAccel<-20) {
         yAccel=-20;
