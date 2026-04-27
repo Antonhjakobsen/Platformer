@@ -1,3 +1,8 @@
+import processing.sound.*;
+SoundFile Switch;
+SoundFile BGmusic;
+SoundFile Jump;
+boolean held=false;
 boolean leftPressed;
 boolean rightPressed;
 boolean upPressed;
@@ -29,6 +34,14 @@ void setup() {
   tick=0;
   backgroundColor=-1;
   background=loadImage("img/Backgrounds/background1.png");
+  Switch = new SoundFile(this, "Sound/sound.wav");
+  BGmusic = new SoundFile(this,"Sound/BGmusic.wav");
+  Jump = new SoundFile(this, "Sound/Jump.wav");
+  
+  BGmusic.loop(1);
+  BGmusic.amp(0.05);
+  Jump.play(1, 0.1);
+
   pixelDensity(1);
   xDot=new float[144];
   yDot=new float[144];
@@ -59,7 +72,8 @@ void keyPressed() {
   if (keyCode == UP) {
     upPressed = true;
     player.playerAY();
-    flip =true;
+    flip = true;
+    Jump.play(1,0.1);
   }
   if (keyCode == DOWN) {
     downPressed = true;
@@ -68,10 +82,15 @@ void keyPressed() {
     backspacePressed=true;
     //print("backspacePressed");
     //print(backspacePressed);
-  } else{
-   backspacePressed=false; 
+  } else {
+    backspacePressed=false;
+  }
+  if (keyCode == BACKSPACE && !held) {
+    Switch.play(0.5, 1.0);
+    held=true;
   }
 }
+
 
 void keyReleased() {
   if (keyCode == LEFT) {
@@ -94,6 +113,7 @@ void keyReleased() {
     if (swapPosFlip2==false) {
       swapPosFlip2=true;
     }
+    held=false;
   }
 }
 
