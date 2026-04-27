@@ -34,7 +34,7 @@ void setup() {
   tick=0;
   backgroundColor=-1;
   background=loadImage("img/Backgrounds/background1.png");
-  Switch = new SoundFile(this, "Sound/sound.wav");
+  Switch = new SoundFile(this, "Sound/TPSound2.wav");
   BGmusic = new SoundFile(this,"Sound/BGmusic.wav");
   Jump = new SoundFile(this, "Sound/Jump.wav");
   
@@ -86,7 +86,6 @@ void keyPressed() {
     backspacePressed=false;
   }
   if (keyCode == BACKSPACE && !held) {
-    Switch.play(0.5, 1.0);
     held=true;
   }
 }

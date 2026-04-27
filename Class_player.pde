@@ -357,6 +357,7 @@ class Player {
           y=yDot[enff+1];
           swapPosFlip=false;
         }
+        Switch.play(0.5, 1.0);
       }
     }
   }
