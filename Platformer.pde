@@ -9,13 +9,13 @@ boolean upPressed;
 boolean downPressed;
 boolean backspacePressed;
 boolean swapPosFlip2;
-float[] xDotPrev;
-float[] yDotPrev;
+int[] xDotPrev;
+int[] yDotPrev;
 color backgroundColor;
-float xPredictR;
-float xPredictL;
-float yPredictT;
-float yPredictB;
+int xPredictR;
+int xPredictL;
+int yPredictT;
+int yPredictB;
 PImage background;
 int yInt;
 int xInt;
@@ -24,30 +24,31 @@ boolean flip;
 
 Player player;
 
-float[] xDot;
-float[] yDot;
+int[] xDot;
+int[] yDot;
 
 boolean jumpAvalible;
 int tick;
 
 void setup() {
   tick=0;
-  backgroundColor=-1;
-  background=loadImage("img/Backgrounds/background1.png");
+  backgroundColor=-16777216;
+  background=loadImage("img/Backgrounds/level_map.jpg");
+  background.loadPixels();
   Switch = new SoundFile(this, "Sound/TPSound2.wav");
-  BGmusic = new SoundFile(this,"Sound/BGmusic.wav");
+  BGmusic = new SoundFile(this, "Sound/BGmusic.wav");
   Jump = new SoundFile(this, "Sound/Jump.wav");
-  
-  BGmusic.loop(1);
+
+  BGmusic.loop();
   BGmusic.amp(0.05);
   Jump.play(1, 0.1);
 
   pixelDensity(1);
-  xDot=new float[144];
-  yDot=new float[144];
-  xDotPrev=new float[144];
-  yDotPrev=new float[144];
-  player= new Player(0, 0, 10, 14, 10, 6);
+  xDot=new int[144];
+  yDot=new int[144];
+  xDotPrev=new int[144];
+  yDotPrev=new int[144];
+  player= new Player(20, background.height-350, 10, 14, 10, 6);
   player.loadAllImages();
   player.shadowArray=new PImage[143];
   frameRate(48);
@@ -55,11 +56,15 @@ void setup() {
 }
 
 void draw() {
+  background(0);
+  pushMatrix();
+  translate(width/2 - player.x, height/2 - player.y);
   drawBackground();
   player.engine();
   player.displayPlayer();
-  drawArrowen();
-  text(player.yAccel, width/2+200, height/2+20);
+  popMatrix();
+  //drawArrowen();
+  //text(player.yAccel, width/2+200, height/2+20);
 }
 
 void keyPressed() {
@@ -73,7 +78,7 @@ void keyPressed() {
     upPressed = true;
     player.playerAY();
     flip = true;
-    Jump.play(1,0.1);
+    Jump.play(1, 0.1);
   }
   if (keyCode == DOWN) {
     downPressed = true;
@@ -87,6 +92,11 @@ void keyPressed() {
   }
   if (keyCode == BACKSPACE && !held) {
     held=true;
+  }
+  if(keyCode==TAB){
+   print(" frameCount: " + frameCount);
+   print(" x: " + player.x);
+   print(" y: " + player.y);
   }
 }
 
@@ -116,8 +126,14 @@ void keyReleased() {
   }
 }
 
+color getPixelSafe(int x, int y) {
+  x = constrain(x, 0, background.width - 1);
+  y = constrain(y, 0, background.height - 1);
+  return background.pixels[y * background.width + x];
+}
+
 void drawBackground() {
-  image(background, -10, -50);
+  image(background, 0, 0);
 }
 
 void drawArrowen() {

@@ -1,20 +1,23 @@
 class Player {
-  float x;
-  float y;
-  float xAccel;
-  float yAccel;
+  int x;
+  int y;
+  int xAccel;
+  int yAccel;
   float accelerationLimit = 10;
-  float friction = 0.60;
-  float baseLine = height/1.2;
+  int friction = 1;
   int enff;
-  float xPosPoint1;
-  float xPosPoint2;
-  float yPosPoint1;
-  float yPosPoint2;
+  int xPosPoint1;
+  int xPosPoint2;
+  int yPosPoint1;
+  int yPosPoint2;
   boolean swapPosFlip=true;
   float swapPosTimer;
-  float xDotLast;
-  float yDotLast;
+  int xDotLast;
+  int yDotLast;
+  int yPredictTInt;
+  int yPredictBInt;
+  int xPredictRInt;
+  int xPredictLInt;
 
   int animationIndex; //idle=0, fall=1, run=2, jump=3
 
@@ -36,7 +39,9 @@ class Player {
 
   PImage[] shadowArray;
 
-  Player(float x, float y, int idlenumFrames, int fallnumFrames, int runnumFrames, int jumpnumFrames) {
+  PImage frame;
+
+  Player(int x, int y, int idlenumFrames, int fallnumFrames, int runnumFrames, int jumpnumFrames) {
     this.x=x;
     this.y=y;
 
@@ -83,50 +88,38 @@ class Player {
 
   void idleAnimation() {
     idlecurrentFrame = (idlecurrentFrame+1) % idlenumFrames;  // Use % to cycle through frames
-    int offset = width/2;
-    for (int i = 0; i < width; i += width) {
-      image(idle[(idlecurrentFrame+offset) % idlenumFrames], x, y);
-    }
+    frame=idle[idlecurrentFrame];
   }
   void fallAnimation() {
     fallcurrentFrame = (fallcurrentFrame+1) % fallnumFrames;  // Use % to cycle through frames
-    int offset = width/2;
-    for (int i = 0; i < width; i += width) {
-      image(fall[(fallcurrentFrame+offset) % fallnumFrames], x, y);
-    }
+    frame=fall[fallcurrentFrame];
   }
 
   void runAnimation() {
     runcurrentFrame = (runcurrentFrame+1) % runnumFrames;  // Use % to cycle through frames
-    int offset = width/2;
-    for (int i = 0; i < width; i += width) {
-      image(run[(runcurrentFrame+offset) % runnumFrames], x, y);
-    }
+    frame=run[runcurrentFrame];
   }
 
   void jumpAnimation() {
     jumpcurrentFrame = (jumpcurrentFrame+1) % jumpnumFrames;
-    int offset=width/2;
-    for (int i = 0; i < width; i += width) {
-      image(jump[(jumpcurrentFrame+offset) % jumpnumFrames], x, y);
-    }
+    frame=jump[jumpcurrentFrame];
   }
 
   void playerAX() { // Player Axis X acceleration
     if (keyPressed==true&&leftPressed==true&&xAccel>-accelerationLimit) {//left
       xAccel-=2;
     } else if (leftPressed==false&&xAccel<0) {
-      xAccel=xAccel*friction;
+      xAccel=xAccel+friction;
     }
     if (keyPressed==true&&rightPressed==true&&xAccel<accelerationLimit) {//right
       xAccel+=2;
     } else if (rightPressed==false&&xAccel>0) {
-      xAccel=xAccel*friction;
+      xAccel=xAccel-friction;
     }
 
     //Brake with down arrow
     if (keyPressed==true&&downPressed==true) {//brake
-      xAccel=xAccel*friction;
+      xAccel=xAccel-friction;
     }
   }
 
@@ -146,58 +139,25 @@ class Player {
   }
 
   void displayPlayer() {
-    if (xAccel<0&&xAccel>-1&&yAccel==0) {//Left
-      pushMatrix();
-      translate(idle[idlecurrentFrame].width+x*2, 0);
-      scale(-1, 1);
-      player.idleAnimation();
-      animationIndex=0;
-      popMatrix();
-      text("Left", width/2, height/1.5);
-    } else if (xAccel>=0&&xAccel<1&&yAccel==0) {//Right
-      pushMatrix();
-      scale(1, 1);
-      player.idleAnimation();
-      animationIndex=0;
-      popMatrix();
-      text("Right", width/2, height/1.5);
-    } else if (xAccel<0&&yAccel!=0) {
-      pushMatrix();
+    if (yAccel!=0) {//vælger først animation
       if (yAccel>0) {
-        translate(fall[fallcurrentFrame].width+x*2, 0);
-        scale(-1, 1);
-        player.fallAnimation();
-        animationIndex=1;
-        //print("fall ");
-      } else if (yAccel<0) {
-        translate(jump[jumpcurrentFrame].width+x*2, 0);
-        scale(-1, 1);
-        player.jumpAnimation();
-        animationIndex=2;
-        //print("jump ");
+        fallAnimation();
+      } else {
+        jumpAnimation();
       }
-      popMatrix();
-    } else if (yAccel!=0) {
-      if (yAccel>0) {
-        player.fallAnimation();
-        //print("fall ");
-        animationIndex=2;
-      } else if (yAccel<0) {
-        player.jumpAnimation();
-        animationIndex=3;
-        //print("jump ");
-      }
-    } else if (xAccel<1) {
-      pushMatrix();
-      translate(run[runcurrentFrame].width+x*2, 0);
-      scale(-1, 1);
-      player.runAnimation();
-      animationIndex=3;
-      popMatrix();
-      //print("running ");
+    } else if (xAccel==0) {
+      idleAnimation();
     } else {
-      player.runAnimation();
-      //print("running 2 ");
+      runAnimation();
+    }
+    if (xAccel < 0) {//vælger enten at flip eller at ikke flip
+      pushMatrix();
+      translate(x + frame.width/2, y);
+      scale(-1, 1);
+      image(frame, -frame.width/2, 0);
+      popMatrix();
+    } else {
+      image(frame, x, y);
     }
   }
 
@@ -248,8 +208,8 @@ class Player {
         }
 
         fill(255);
-        float xC=idle[1].width/2;
-        float yC=idle[1].height/2;
+        int xC=idle[1].width/2;
+        int yC=idle[1].height/2;
         xPosPoint1 = xDot[i]+xC;
         xPosPoint2 = xDotPrev[i]+xC;
         yPosPoint1 = yDot[i]+yC;
@@ -283,52 +243,54 @@ class Player {
   void predictions() {
     yPredictT = y+idle[0].height/4 + yAccel;
 
-    yPredictB = y+idle[1].height/1.66 + yAccel;
+    yPredictB = y+idle[1].height-51 + yAccel;
 
-    xPredictR = x+idle[0].width/1.8 + xAccel;
+    xPredictR = x+idle[0].width/2 + xAccel;
 
-    xPredictL = x-idle[0].width/1.8 + xAccel;
+    xPredictL = x + xAccel;
   }
 
   void xMove() {
     yInt=int(y);
-    int xPredictRInt=int(xPredictR);
-    int xPredictLInt=int(xPredictL);
-    if (get(xPredictRInt, yInt)==backgroundColor&&get(xPredictRInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
+    xPredictRInt=int(xPredictR);
+    xPredictLInt=int(xPredictL);
+    if (getPixelSafe(xPredictRInt, yInt+idle[0].height/2)==backgroundColor&&getPixelSafe(xPredictRInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
       x=x+xAccel;
       moved=true;
     } else {
       xAccel=0;
-      print(" x stop: " +" R: " + get(xPredictRInt, yInt+idle[0].height-51));
+      //print(" x stop: " +" R: " + get(xPredictRInt, yInt+idle[0].height-51));
     }
-    if (get(xPredictLInt, yInt)==backgroundColor&&get(xPredictLInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
-      x=x+xAccel;
+    if (getPixelSafe(xPredictLInt, yInt+idle[0].height/2)==backgroundColor&&getPixelSafe(xPredictLInt, yInt+idle[0].height-51)==backgroundColor&&moved==false) {
+      x=x-xAccel;
       moved=true;
-    } else if (moved==true) {
-    } else {
+    } else if(moved==false) {
       xAccel=0;
-      print("L: " + get(xPredictLInt, yInt+idle[0].height-51));
+      //print("L: " + get(xPredictLInt, yInt+idle[0].height-51));
     }
-    //(til at teste med)circle(xPredictR, y+idle[0].height/2, 5);
-    //(til at teste med)circle(xPredictL, y+idle[0].height/2, 5);
+    //circle(xPredictR, yInt, 20);
+    //circle(xPredictL, yInt+idle[0].height-51, 20);
     moved=false;
   }
 
   void yMove() {
-    int yPredictBInt=int(yPredictB);
-    int yPredictTInt=int(yPredictT);
+    yPredictBInt=int(yPredictB);
+    yPredictTInt=int(yPredictT);
     xInt=int(x);
-    if (get(xInt+idle[0].width/2, yPredictBInt)==backgroundColor) {
+    if(getPixelSafe(xInt+idle[0].width/2, yPredictTInt)!=backgroundColor){
+      yAccel=0;
+    }
+    if (getPixelSafe(xInt+idle[0].width/2, yPredictBInt)==backgroundColor) {
       y=y+yAccel;
     } else {
       yAccel=0;
       tick=0;
       jumpAvalible=true;
     }
-    if (get(xInt+idle[0].width/2, yPredictBInt+1)==backgroundColor) {
+    if (getPixelSafe(xInt+idle[0].width/2, yPredictBInt+1)==backgroundColor) {
       yAccel+=1;
     }
-    if (get(xInt+idle[0].width/2, yPredictTInt)!=backgroundColor) {
+    if (getPixelSafe(xInt+idle[0].width/2, yPredictTInt)!=backgroundColor) {
       yAccel+=1;
     }
     //(til at teste med)circle(xInt+idle[0].width/2, yPredictTInt, 5);
@@ -336,22 +298,22 @@ class Player {
   }
 
   void swapPos() {
-    print(" backspace pressed: ");
-    print(backspacePressed);
-    print(" flip: ");
-    print(swapPosFlip);
+    //print(" backspace pressed: ");
+    //print(backspacePressed);
+    //print(" flip: ");
+    //print(swapPosFlip);
 
     if (frameCount>swapPosTimer+144) {
       swapPosFlip=true;
       if (backspacePressed==true&&swapPosFlip==true) {
         if (enff==143) {
-          print("               swapPos             ");
+          //print("               swapPos             ");
           swapPosTimer=frameCount;
           x=xDot[0];
           y=yDot[0];
           swapPosFlip=false;
         } else {
-          print("               swapPos             ");
+          //print("               swapPos             ");
           swapPosTimer=frameCount;
           x=xDot[enff+1];
           y=yDot[enff+1];
@@ -369,6 +331,8 @@ class Player {
     yMove();
     swapPos();
     drawBez();
+    x = constrain(x, 0, background.width - 1);
+    y = constrain(y, 0, background.height - 1);
     fill(255);
     /*
     text(x, width/2, height/2);
