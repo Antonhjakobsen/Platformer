@@ -32,9 +32,9 @@ int tick;
 
 void setup() {
   tick=0;
-  backgroundColor=-16777216;
   background=loadImage("img/Backgrounds/level_map.jpg");
   background.loadPixels();
+
   Switch = new SoundFile(this, "Sound/TPSound2.wav");
   BGmusic = new SoundFile(this, "Sound/BGmusic.wav");
   Jump = new SoundFile(this, "Sound/Jump.wav");
@@ -49,6 +49,7 @@ void setup() {
   xDotPrev=new int[144];
   yDotPrev=new int[144];
   player= new Player(20, background.height-350, 10, 14, 10, 6);
+  backgroundColor=getPixelSafe(player.x,player.y);
   player.loadAllImages();
   player.shadowArray=new PImage[143];
   frameRate(48);
