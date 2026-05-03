@@ -79,7 +79,6 @@ void keyPressed() {
     upPressed = true;
     player.playerAY();
     flip = true;
-    Jump.play(1, 0.1);
   }
   if (keyCode == DOWN) {
     downPressed = true;

@@ -129,6 +129,7 @@ class Player {
       jumpAvalible=false;
     }
     if (keyPressed==true&&upPressed==true&&jumpAvalible==true&&flip==false) {
+      Jump.play(1, 0.1);
       yAccel=0;
       yAccel-=20;
       if (yAccel<-20) {
