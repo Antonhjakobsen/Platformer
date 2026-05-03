@@ -93,11 +93,13 @@ void keyPressed() {
   if (keyCode == BACKSPACE && !held) {
     held=true;
   }
+  /* Denne sektion er til test
   if(keyCode==TAB){
    print(" frameCount: " + frameCount);
    print(" x: " + player.x);
    print(" y: " + player.y);
   }
+  */
 }
 
 
